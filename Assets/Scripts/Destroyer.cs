@@ -1,62 +1,52 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Destroyer : MonoBehaviour
 {
-    private const int DestroyButton = 0;
+    private float _explosionRadius = 30;
+    private float _explosionForce = 2000;
 
-    [SerializeField] private Camera _camera;
-    [SerializeField] private Ray _ray;
-
-    public event Action<Cube> Divided;
-    public event Action<Cube> Exploded;
-
-    public void Explode(List<Rigidbody> targets, Cube cube)
+    public void Explode(Cube target)
     {
-        foreach (Rigidbody explodableObject in targets)
+        List<Cube> targets = DefineTargetCubes(target);
+
+        foreach (Cube targetCube in targets)
         {
-            explodableObject.AddExplosionForce(cube.ExplosionForce, transform.position, cube.ExplosionRadius);
+            Rigidbody explodableObject = targetCube.Rigidbody;
+
+            explodableObject.AddExplosionForce(_explosionForce, transform.position, _explosionRadius);
         }
     }
 
-    private void Update()
+    private List<Cube> DefineTargetCubes(Cube target)
     {
-        ReadInput();
+        List<Cube> targets = new();
+        List<Cube> cubes = FindCubesInRadius(target);
+
+        foreach (var cube in cubes)
+        {
+            if (cube.IdGroup == target.IdGroup)
+            {
+                targets.Add(cube);
+            }
+        }
+
+        return targets;
     }
 
-    private void ReadInput()
+    private List<Cube> FindCubesInRadius(Cube target)
     {
-        if (Input.GetMouseButtonDown(DestroyButton))
+        Collider[] colliders = Physics.OverlapSphere(target.transform.position, _explosionRadius);
+        List<Cube> cubes = new();
+
+        foreach (Collider collider in colliders)
         {
-            SelectTargetWithRaycast();
-        }
-    }
-
-    private void SelectTargetWithRaycast()
-    {
-        _ray = _camera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(_ray, out hit, Mathf.Infinity) && hit.transform.TryGetComponent(out Cube cube))
-        {
-            SelectAnAction(cube);
-        }
-    }
-
-    private void SelectAnAction(Cube cube)
-    {
-        if (cube.IsDivide())
-        {          
-            cube.Change();
-
-            Divided?.Invoke(cube);
-        }
-        else
-        {
-            Exploded?.Invoke(cube);
+            if (collider.TryGetComponent<Cube>(out Cube cube))
+            {
+                cubes.Add(cube);
+            }
         }
 
-        cube.Destroy();
+        return cubes;
     }
 }

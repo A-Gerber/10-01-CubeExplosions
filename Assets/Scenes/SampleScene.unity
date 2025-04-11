@@ -757,7 +757,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 978eb79fadc8da64e8a8f5bb2331f037, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _camera: {fileID: 963194227}
 --- !u!1 &1800877425
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,8 +802,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefabCube: {fileID: 2467568046187678933, guid: a9edb4a0727bc324e8051e970faf8104, type: 3}
-  _cubesFactory: {fileID: 1800877427}
-  _destroyer: {fileID: 1613772015}
 --- !u!1 &1842355283
 GameObject:
   m_ObjectHideFlags: 0

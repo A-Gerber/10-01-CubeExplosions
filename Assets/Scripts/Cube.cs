@@ -4,49 +4,75 @@ using UnityEngine;
 
 public class Cube : MonoBehaviour
 {
-    [SerializeField] private float _probabilitySplit = 100;
-
+    private Destroyer _destroyer;
+    private CubesSpawner _cubesSpawner;
     private Renderer _renderer;
 
-    private float _dividerProbability = 2;
+    private float _multiplierProbability = 0.5f;
     private float _multiplierScale = 0.5f;
-
-    public float ExplosionRadius { get; private set; } = 30;
-    public float ExplosionForce { get; private set; } = 2000;
+ 
+    public float ProbabilityDivide { get; private set; }
     public int IdGroup { get; private set; }
-
-    public void SetIdGroup (int id)
-    {
-        IdGroup = id;
-    }
-
-    public void Change()
-    {
-        Reduce();
-        ChangeColor();
-    }
-
-    public bool IsDivide()
-    {
-        int percent = 100;
-        int minValue = 1;
-        int coefficient = percent / (int)_probabilitySplit;
-
-        int randomValue = UnityEngine.Random.Range(minValue, coefficient);
-
-        return coefficient == randomValue;
-    }
-
-    public void Destroy()
-    {
-        Destroy(gameObject);
-    }
+    public Rigidbody Rigidbody { get; private set; }
 
     private void Awake()
     {
         _renderer = GetComponent<Renderer>();
+        _destroyer = FindObjectOfType<Destroyer>();
+        _cubesSpawner = FindObjectOfType<CubesSpawner>();
+        Rigidbody = GetComponent<Rigidbody>();
+
+        Rigidbody.useGravity = true;
 
         ChangeColor();
+    }
+
+    private void OnMouseDown()
+    {
+        SelectAnAction();
+    }
+
+    public void SetIdGroup(int id)
+    {
+        IdGroup = id;
+    }
+
+    public void SetProbabilityDivide(float probability)
+    {
+        ProbabilityDivide = probability;
+    }
+
+    private bool IsDivide()
+    {
+        int maxValue = 100;
+        int minValue = 1;
+
+        int randomValue = UnityEngine.Random.Range(minValue, maxValue);
+
+        return  randomValue <= ProbabilityDivide;
+    }
+
+    private void Destroy()
+    {
+        Destroy(gameObject);
+    }
+
+    private void SelectAnAction()
+    {
+        TryGetComponent(out Cube cube);
+
+        if (IsDivide())
+        {
+            Change();
+
+            _cubesSpawner.DivideCubes(cube);
+        }
+        else
+        {
+            _destroyer.Explode(cube);
+        }
+
+        Destroy();
     }
 
     private void ChangeColor()
@@ -54,9 +80,13 @@ public class Cube : MonoBehaviour
         _renderer.material.color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
     }
 
-    private void Reduce()
+    private void Change()
     {
+        Rigidbody.useGravity = true;
+
         transform.localScale *= _multiplierScale;
-        _probabilitySplit /= _dividerProbability;
+        ProbabilityDivide *= _multiplierProbability;
+
+        ChangeColor();
     }
 }
