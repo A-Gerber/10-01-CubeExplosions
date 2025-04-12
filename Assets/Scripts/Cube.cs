@@ -1,10 +1,9 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody), typeof(Renderer))]
-
+[RequireComponent(typeof(Rigidbody), typeof(ColorChanger))]
 public class Cube : MonoBehaviour
 {
-    private Renderer _renderer;
+    private ColorChanger _colorChanger;
 
     private float _multiplierProbability = 0.5f;
     private float _multiplierScale = 0.5f;
@@ -15,12 +14,15 @@ public class Cube : MonoBehaviour
 
     private void Awake()
     {
-        _renderer = GetComponent<Renderer>();
+        _colorChanger = GetComponent<ColorChanger>();
         Rigidbody = GetComponent<Rigidbody>();
 
         Rigidbody.useGravity = true;
+    }
 
-        ChangeColor();
+    private void Start()
+    {
+        _colorChanger.ChangeColor();
     }
 
     public void Init(int id, float probability)
@@ -48,10 +50,5 @@ public class Cube : MonoBehaviour
     {
         transform.localScale *= _multiplierScale;
         ProbabilityDivide *= _multiplierProbability;
-    }
-
-    private void ChangeColor()
-    {
-        _renderer.material.color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
     }
 }

@@ -17,12 +17,7 @@ public class CubesSpawner : MonoBehaviour
     {
         _cubes = new();
 
-        CreateStartCubes();
-    }
-
-    public void DivideCubes(Cube cube)
-    {
-        CreateCubes(cube);
+        SpawmStartCubes();
     }
 
     public List<Cube> GiveListCubes(int id)
@@ -30,7 +25,7 @@ public class CubesSpawner : MonoBehaviour
         return _cubes[id];
     }
 
-    private void CreateCubes(Cube cube)
+    public void SpawnCubes(Cube cube)
     {
         int value = UnityEngine.Random.Range(_minCountCubes, _maxCountCubes + 1);
         int idGroup = ++_idGroup;
@@ -48,7 +43,7 @@ public class CubesSpawner : MonoBehaviour
         _cubes.Add(idGroup, cubes);
     }
 
-    private void CreateStartCubes()
+    private void SpawmStartCubes()
     {
         int value = UnityEngine.Random.Range(_minCountCubes, _maxCountCubes + 1);
         int idGroup = ++_idGroup;

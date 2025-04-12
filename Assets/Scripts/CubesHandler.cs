@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ManagerCubes : MonoBehaviour
+public class CubesHandler : MonoBehaviour
 {
     private const int ExplodeButton = 0;
 
@@ -40,7 +40,7 @@ public class ManagerCubes : MonoBehaviour
         {
             cube.Change();
 
-            _cubesSpawner.DivideCubes(cube);
+            _cubesSpawner.SpawnCubes(cube);
         }
         else
         {
