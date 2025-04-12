@@ -23,13 +23,9 @@ public class Cube : MonoBehaviour
         ChangeColor();
     }
 
-    public void SetIdGroup(int id)
+    public void Init(int id, float probability)
     {
         IdGroup = id;
-    }
-
-    public void SetProbabilityDivide(float probability)
-    {
         ProbabilityDivide = probability;
     }
 
@@ -38,7 +34,7 @@ public class Cube : MonoBehaviour
         int maxValue = 100;
         int minValue = 1;
 
-        int randomValue = UnityEngine.Random.Range(minValue, maxValue);
+        int randomValue = UnityEngine.Random.Range(minValue, maxValue + 1);
 
         return  randomValue <= ProbabilityDivide;
     }

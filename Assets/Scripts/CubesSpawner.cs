@@ -17,26 +17,48 @@ public class CubesSpawner : MonoBehaviour
     {
         _cubes = new();
 
-        CreateCubes(_minCountCubes, _maxCountCubes, _prefabCube, _startProbabilityDivide);
+        CreateStartCubes();
     }
 
     public void DivideCubes(Cube cube)
     {
-        CreateCubes(_minCountCubes, _maxCountCubes, cube, cube.ProbabilityDivide);
+        CreateCubes(cube);
     }
 
-    private void CreateCubes(int min, int max, Cube cube, float probability)
+    public List<Cube> GiveListCubes(int id)
     {
-        int value = UnityEngine.Random.Range(min, max);
+        return _cubes[id];
+    }
+
+    private void CreateCubes(Cube cube)
+    {
+        int value = UnityEngine.Random.Range(_minCountCubes, _maxCountCubes + 1);
         int idGroup = ++_idGroup;
 
         List<Cube> cubes = new();
 
         for (int i = 0; i < value; i++)
         {
-            _currentCube = Instantiate(cube, CalculateCoordinates(), Quaternion.identity);
-            _currentCube.SetIdGroup(idGroup);
-            _currentCube.SetProbabilityDivide (probability);
+            _currentCube = Instantiate(cube, cube.transform.position, Quaternion.identity);
+            _currentCube.Init(idGroup, cube.ProbabilityDivide);
+
+            cubes.Add(_currentCube);
+        }
+
+        _cubes.Add(idGroup, cubes);
+    }
+
+    private void CreateStartCubes()
+    {
+        int value = UnityEngine.Random.Range(_minCountCubes, _maxCountCubes + 1);
+        int idGroup = ++_idGroup;
+
+        List<Cube> cubes = new();
+
+        for (int i = 0; i < value; i++)
+        {
+            _currentCube = Instantiate(_prefabCube, CalculateCoordinates(), Quaternion.identity);
+            _currentCube.Init(idGroup, _startProbabilityDivide);
 
             cubes.Add(_currentCube);
         }
@@ -52,7 +74,7 @@ public class CubesSpawner : MonoBehaviour
 
         for (int i = 0; i < coordinates.Length; i++)
         {
-            coordinates[i] = UnityEngine.Random.Range(min, max);
+            coordinates[i] = UnityEngine.Random.Range(min, max + 1);
         }
 
         return new Vector3(coordinates[0], coordinates[1], coordinates[2]);

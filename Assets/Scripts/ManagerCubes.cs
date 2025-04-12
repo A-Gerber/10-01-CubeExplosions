@@ -44,7 +44,7 @@ public class ManagerCubes : MonoBehaviour
         }
         else
         {
-            _exploder.Explode(DefineTargetCubes(cube));
+            _exploder.Explode(DefineTargetCubes(cube), cube.transform.position);
         }
 
         cube.Destroy();
@@ -53,32 +53,15 @@ public class ManagerCubes : MonoBehaviour
     private List<Cube> DefineTargetCubes(Cube target)
     {
         List<Cube> targets = new();
-        List<Cube> cubes = FindCubesInRadius(target);
 
-        foreach (var cube in cubes)
+        foreach (var cube in _cubesSpawner.GiveListCubes(target.IdGroup))
         {
-            if (cube.IdGroup == target.IdGroup)
+            if (cube != null)
             {
                 targets.Add(cube);
             }
         }
 
         return targets;
-    }
-
-    private List<Cube> FindCubesInRadius(Cube target)
-    {
-        Collider[] colliders = Physics.OverlapSphere(target.transform.position, _exploder.ExplosionRadius);
-        List<Cube> cubes = new();
-
-        foreach (Collider collider in colliders)
-        {
-            if (collider.TryGetComponent<Cube>(out Cube cube))
-            {
-                cubes.Add(cube);
-            }
-        }
-
-        return cubes;
     }
 }
