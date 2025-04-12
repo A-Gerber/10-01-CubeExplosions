@@ -28,7 +28,7 @@ public class CubesSpawner : MonoBehaviour
     private void CreateCubes(int min, int max, Cube cube, float probability)
     {
         int value = UnityEngine.Random.Range(min, max);
-        int idGroup = AssignId();
+        int idGroup = ++_idGroup;
 
         List<Cube> cubes = new();
 
@@ -42,13 +42,6 @@ public class CubesSpawner : MonoBehaviour
         }
 
         _cubes.Add(idGroup, cubes);
-    }
-
-    private int AssignId()
-    {
-        _idGroup++;
-
-        return _idGroup;
     }
 
     private Vector3 CalculateCoordinates()

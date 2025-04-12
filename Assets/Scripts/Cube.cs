@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Cube : MonoBehaviour
 {
-    private Destroyer _destroyer;
-    private CubesSpawner _cubesSpawner;
     private Renderer _renderer;
 
     private float _multiplierProbability = 0.5f;
@@ -18,18 +16,11 @@ public class Cube : MonoBehaviour
     private void Awake()
     {
         _renderer = GetComponent<Renderer>();
-        _destroyer = FindObjectOfType<Destroyer>();
-        _cubesSpawner = FindObjectOfType<CubesSpawner>();
         Rigidbody = GetComponent<Rigidbody>();
 
         Rigidbody.useGravity = true;
 
         ChangeColor();
-    }
-
-    private void OnMouseDown()
-    {
-        SelectAnAction();
     }
 
     public void SetIdGroup(int id)
@@ -42,7 +33,7 @@ public class Cube : MonoBehaviour
         ProbabilityDivide = probability;
     }
 
-    private bool IsDivide()
+    public bool IsDivide()
     {
         int maxValue = 100;
         int minValue = 1;
@@ -52,41 +43,19 @@ public class Cube : MonoBehaviour
         return  randomValue <= ProbabilityDivide;
     }
 
-    private void Destroy()
+    public void Destroy()
     {
         Destroy(gameObject);
     }
 
-    private void SelectAnAction()
+    public void Change()
     {
-        TryGetComponent(out Cube cube);
-
-        if (IsDivide())
-        {
-            Change();
-
-            _cubesSpawner.DivideCubes(cube);
-        }
-        else
-        {
-            _destroyer.Explode(cube);
-        }
-
-        Destroy();
+        transform.localScale *= _multiplierScale;
+        ProbabilityDivide *= _multiplierProbability;
     }
 
     private void ChangeColor()
     {
         _renderer.material.color = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
-    }
-
-    private void Change()
-    {
-        Rigidbody.useGravity = true;
-
-        transform.localScale *= _multiplierScale;
-        ProbabilityDivide *= _multiplierProbability;
-
-        ChangeColor();
     }
 }
