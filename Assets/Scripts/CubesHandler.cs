@@ -34,26 +34,9 @@ public class CubesHandler : MonoBehaviour
         }
         else
         {
-            _exploder.Init(cube);
-            _exploder.Explode(DefineTargetCubes(cube));
+            _exploder.Explode(cube);
         }
 
         cube.Destroy();
-    }
-
-    private List<Cube> DefineTargetCubes(Cube target)
-    {
-        Collider[] colliders = Physics.OverlapSphere(target.transform.position, _exploder.ExplosionRadius);
-        List<Cube> targets = new();
-
-        foreach (Collider collider in colliders)
-        {
-            if (collider.TryGetComponent<Cube>(out Cube cube))
-            {
-                targets.Add(cube);
-            }
-        }
-
-        return targets;
     }
 }

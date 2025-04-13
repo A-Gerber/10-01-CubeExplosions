@@ -6,24 +6,35 @@ public class Exploder : MonoBehaviour
     private float _baseExplosionForce = 3000;
     private float _baseExplosionRadius = 10;
     private float _explosionMultiplier;
-    private Vector3 _pointExplode;
 
     public float ExplosionForce => _baseExplosionForce * _explosionMultiplier;
     public float ExplosionRadius => _baseExplosionRadius * _explosionMultiplier;
 
-    public void Explode(List<Cube> targets)
+    public void Explode(Cube explosionCube)
     {
-        foreach (Cube target in targets)
+        _explosionMultiplier = 1 / explosionCube.transform.localScale.magnitude;
+
+        foreach (Cube target in DefineTargetCubes(explosionCube))
         {
             Rigidbody explodableObject = target.Rigidbody;
 
-            explodableObject.AddExplosionForce(ExplosionForce, _pointExplode, ExplosionRadius);
+            explodableObject.AddExplosionForce(ExplosionForce, explosionCube.transform.position, ExplosionRadius);
         }
     }
 
-    public void Init(Cube explosionCube)
+    private List<Cube> DefineTargetCubes(Cube target)
     {
-        _explosionMultiplier = 1 / explosionCube.transform.localScale.magnitude;
-        _pointExplode = explosionCube.transform.position;
+        Collider[] colliders = Physics.OverlapSphere(target.transform.position, ExplosionRadius);
+        List<Cube> targets = new();
+
+        foreach (Collider collider in colliders)
+        {
+            if (collider.TryGetComponent<Cube>(out Cube cube))
+            {
+                targets.Add(cube);
+            }
+        }
+
+        return targets;
     }
 }
