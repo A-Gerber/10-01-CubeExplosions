@@ -12,25 +12,15 @@ public class CubesHandler : MonoBehaviour
 
     private void Update()
     {
-        ReadInput();
-    }
-
-    private void ReadInput()
-    {
         if (Input.GetMouseButtonDown(ExplodeButton))
         {
-            SelectTargetWithRaycast();
-        }
-    }
+            _ray = _camera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
 
-    private void SelectTargetWithRaycast()
-    {
-        _ray = _camera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(_ray, out hit, Mathf.Infinity) && hit.transform.TryGetComponent(out Cube cube))
-        {
-            SelectAnAction(cube);
+            if (Physics.Raycast(_ray, out hit, Mathf.Infinity) && hit.transform.TryGetComponent(out Cube cube))
+            {
+                SelectAnAction(cube);
+            }
         }
     }
 
@@ -44,7 +34,8 @@ public class CubesHandler : MonoBehaviour
         }
         else
         {
-            _exploder.Explode(DefineTargetCubes(cube), cube.transform.position);
+            _exploder.Init(cube);
+            _exploder.Explode(DefineTargetCubes(cube));
         }
 
         cube.Destroy();
@@ -52,11 +43,12 @@ public class CubesHandler : MonoBehaviour
 
     private List<Cube> DefineTargetCubes(Cube target)
     {
+        Collider[] colliders = Physics.OverlapSphere(target.transform.position, _exploder.ExplosionRadius);
         List<Cube> targets = new();
 
-        foreach (var cube in _cubesSpawner.GiveListCubes(target.IdGroup))
+        foreach (Collider collider in colliders)
         {
-            if (cube != null)
+            if (collider.TryGetComponent<Cube>(out Cube cube))
             {
                 targets.Add(cube);
             }

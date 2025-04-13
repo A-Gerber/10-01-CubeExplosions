@@ -3,17 +3,27 @@ using UnityEngine;
 
 public class Exploder : MonoBehaviour
 {
-    private float _explosionForce = 2000;
+    private float _baseExplosionForce = 3000;
+    private float _baseExplosionRadius = 10;
+    private float _explosionMultiplier;
+    private Vector3 _pointExplode;
 
-    public float ExplosionRadius { get; private set; } = 15;
+    public float ExplosionForce => _baseExplosionForce * _explosionMultiplier;
+    public float ExplosionRadius => _baseExplosionRadius * _explosionMultiplier;
 
-    public void Explode(List<Cube> targets, Vector3 position)
+    public void Explode(List<Cube> targets)
     {
-        foreach (Cube targetCube in targets)
+        foreach (Cube target in targets)
         {
-            Rigidbody explodableObject = targetCube.Rigidbody;
+            Rigidbody explodableObject = target.Rigidbody;
 
-            explodableObject.AddExplosionForce(_explosionForce, position, ExplosionRadius);
+            explodableObject.AddExplosionForce(ExplosionForce, _pointExplode, ExplosionRadius);
         }
+    }
+
+    public void Init(Cube explosionCube)
+    {
+        _explosionMultiplier = 1 / explosionCube.transform.localScale.magnitude;
+        _pointExplode = explosionCube.transform.position;
     }
 }
